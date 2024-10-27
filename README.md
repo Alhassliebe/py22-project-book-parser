@@ -1,4 +1,4 @@
-# [py21-project-book-parser](https://t.me/pyproj_icba_bot)
+# [py22-project-book-parser](https://t.me/pyproj_icba_bot)
 Это проект по программированию трёх студентов ФиКЛа НИУ ВШЭ.
 Он представляет из себя бота, умеющего парсить художественную литературу, находить в ней имена персонажей, рассчитывать связи между ними и визуализировать эти связи в виде HTML-графа.  
 [Презентация с примером запуска](https://docs.google.com/presentation/d/15j1VmueZI42IqV_gl9CYikQEbYUJbqJsgdmqB3cjqEM/edit?usp=sharing)
