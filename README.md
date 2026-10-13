@@ -1,47 +1,41 @@
-# [py22-project-book-parser](https://t.me/pyproj_icba_bot)
-Это проект по программированию трёх студентов ФиКЛа НИУ ВШЭ.
-Он представляет из себя бота, умеющего парсить художественную литературу, находить в ней имена персонажей, рассчитывать связи между ними и визуализировать эти связи в виде HTML-графа.  
-[Презентация с примером запуска](https://docs.google.com/presentation/d/15j1VmueZI42IqV_gl9CYikQEbYUJbqJsgdmqB3cjqEM/edit?usp=sharing)
+# Book Parser: Character Networks from Fiction
 
-## Режимы парсера
-Первый - вывод данных по заданному пользователем списку персонажей.
-Второй - вывод всех найденных имён и ручная сортировка имён пользователем (а также ввод кастомных частотности упоминания и веса связи между персонажами).
-Третий - вывод частотности персонажей по главам, страницам или другим обозначенным кускам текста.
+A Telegram bot ([@pyproj_icba_bot](https://t.me/pyproj_icba_bot)) that reads a novel, finds the characters, measures how often they interact and draws the result as an interactive HTML graph.
 
-## Архитектура бота
-![Схема бота](https://raw.githubusercontent.com/WadjetEyeTheSpy/py21-project-book-parser/main/bot_scheme.png)
+Team project by three students of Fundamental and Computational Linguistics at HSE University (2022). [Presentation with a demo run](https://docs.google.com/presentation/d/15j1VmueZI42IqV_gl9CYikQEbYUJbqJsgdmqB3cjqEM/edit?usp=sharing) (in Russian).
 
-## FAQ: что происходит на каждом из этапов
-На каждом этапе первым шагом пользователь кидает текст в формате .txt, кодировке UTF-8.
-### Первый режим
-- пользователь выбирает разделитель абзацев (либо отступ, либо новая строка)
-- рассказывает боту, какое количество взаимодействий между персонажами должно пойти в граф
-- вбивает кастомные имена персонажей и ждёт граф. 
-Результат: csv-файл и ссылка на html-файл.
+## How it works
 
-### Второй режим
-- пользователь задаёт, сколько раз имя должно встретиться в тексте, чтобы быть значимым для графа 
-- ждёт, получает список предполагаемых имён, вручную вводит те, которые ему интересны
-- рассказывает боту, какое количество взаимодействий между персонажами должно пойти в граф
-- ждёт. 
-Результат: csv-файл и ссылка на html-файл.
+The user sends a `.txt` file (UTF-8) and picks one of three modes.
 
-### Третий режим: 
-- пользователь выбирает разделитель текста (кастомный для разбивки на главы, части, книги и так далее по указанному слову)
-- указывает количество персонажей для каждого куска текста
-- указывает, хочет ли он, чтобы бот предпринял попытку угадать главного героя текста. 
-Результат: txt-файл.
+1. **Given characters.** The user lists the characters of interest and chooses the paragraph separator (tab or new line) and how many interactions should go into the graph. The bot returns a CSV with the links and an HTML graph.
+2. **Discovered characters.** The bot extracts candidate names that appear more often than a chosen threshold, the user picks the relevant ones, and the bot builds the graph. Two names joined with `_` are treated as one character (for example `Harry_Potter`).
+3. **Characters by chapter.** The text is split by a custom separator (chapter, part, book) and the bot reports the most frequent characters in each piece. Optionally it tries to guess the main character.
 
-## FAQ: а это ещё что такое?!
-На разных этапах бот может попросить такие штуки как:
-- вес связи - это количество взаимодействий между персонажами.
-- разделитель - это штука, которая разделяет абзацы текста, например, отступ (Tab) или новая строка.
-В режиме 2, если вы хотите, чтобы какие-то два имени учитывались как обозначения одного персонажа, вводите их через нижнее подчеркивание (вот это \_). Но имейте в виду, что лучше не делать так для, например, фамилий или именований типа Mr, потому что тогда все фамилии/именования в тексте будут приписаны одному персонажу. 
+Name candidates are proper nouns found with spaCy's part-of-speech tagger. The weight of a link between two characters is the number of times they co-occur in the same paragraph. Graphs are drawn with pyvis.
 
+![Bot architecture](bot_scheme.png)
 
-## Распределение обязанностей
-1. Логика обработки литературы, создание парсера - [Дарья Харламова](https://github.com/harlamovads)
-2. Визуализация получаемых данных, написание кода бота - [Алиса Лёзина](https://github.com/WadjetEyeTheSpy)
-3. Архитектура бота, написание кода бота - [Алёна Муравьёва](https://github.com/Alhassliebe)
+## Files
 
-## [Нужные для локального запуска модули](https://github.com/WadjetEyeTheSpy/py21-project-book-parser/blob/main/requirements.txt)
+| File | What it does |
+|---|---|
+| `bot.py` | Telegram bot logic and dialogue flow |
+| `modes.py` | Text processing and name extraction for the three modes |
+| `ghandvis.py` | Graph construction and HTML visualisation (pyvis), upload of the HTML page |
+| `requirements.txt` | Dependencies |
+
+## How to run
+
+```bash
+pip install -r requirements.txt
+# put your Telegram bot token into bot.py (TOKEN)
+# and a GitHub token into ghandvis.py (used to publish the HTML graph)
+python bot.py
+```
+
+## Team
+
+- Text processing and parser logic: [Daria Kharlamova](https://github.com/harlamovads)
+- Data visualisation and bot code: [Alisa Lyozina](https://github.com/WadjetEyeTheSpy)
+- Bot architecture and bot code: [Alena Muravyeva](https://github.com/Alhassliebe)
